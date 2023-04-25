@@ -39,5 +39,10 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+//associations
+db.Transaction.belongsTo(db.User, { foreignKey: 'receiver' });
+db.Transaction.belongsTo(db.User, { foreignKey: 'donator' });
+db.User.hasMany(db.Transaction, { foreignKey: 'receiver' });
+db.User.hasMany(db.Transaction, { foreignKey: 'donator' });
 
 module.exports = db;

@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "web_donasi",
+    "database": "web_service_donasi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
