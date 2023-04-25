@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     desc: { 
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
     },
     hp: { 
       type: DataTypes.STRING,
