@@ -24,13 +24,16 @@
 //do migrate
 //npx sequelize-cli db:migrate
 //npx sequelize-cli db:seed:all
-
 const express = require("express");
 const apiRouter = require("./src/routes/routes");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(apiRouter)
+
+//cara pake dotenv
+require('dotenv').config()
+console.log(process.env.OY_USERNAME)
 
 const port = 3000;
 app.listen(port, function () { 
