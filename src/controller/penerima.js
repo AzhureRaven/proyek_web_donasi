@@ -14,18 +14,20 @@ const penerima = {
         try {
             await schema.validateAsync(req.body)
         } catch (error) {
-            return res.status(403).send({message: error.toString()})
+            return res.status(400).send({message: error.toString()})
         }
         const {username, password} = req.body;
         const user = await db.User.findOne({
             where: {
                 [db.Op.or]: [{ username: username }, { email: username }],
-                password: userFunctions.hash(password),
-                role: "receiver"
+                password: userFunctions.hash(password)
             }
         });
         if (!user) {
-            return res.status(404).send({message: "Username/Email or Password Invalid!"})
+            return res.status(404).send({message: "Username/Email atau Password Invalid!"})
+        }
+        if(user.role != "receiver"){
+            return res.status(403).send({message: "Jenis Akun Invalid!"})
         }
         let token = jwt.sign({
             username: user.username,
