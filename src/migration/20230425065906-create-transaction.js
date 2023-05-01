@@ -44,6 +44,9 @@ module.exports = {
       bank_account: {
         type: Sequelize.STRING
       },
+      link_transaksi: {
+        type: Sequelize.STRING
+      },
       status: {
         allowNull: false,
         type: Sequelize.STRING

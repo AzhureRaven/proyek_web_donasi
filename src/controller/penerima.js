@@ -4,6 +4,8 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const userFunctions = require("../functions/user_functions")
+const transactionFunctions = require("../functions/transaction_functions")
+const joiFunctions = require("../functions/joi_functions")
 
 const penerima = {
     login: async function (req, res) {
