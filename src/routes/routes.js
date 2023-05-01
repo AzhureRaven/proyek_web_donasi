@@ -17,7 +17,7 @@ penerimaRouter.get("/tes-auth",[middleware.cekToken, middleware.cekPenerima], pe
 
 const pemberiRouter = express.Router();
 pemberiRouter.post("/login", pemberi.login);
-//pemberiRouter.post("/beri-donasi/:penerima", [middleware.cekToken, middleware.cekPemberi], pemberi.tesAuth);
+pemberiRouter.post("/beri-donasi/:penerima", [middleware.cekToken, middleware.cekPemberi], pemberi.beriDonasi);
 // bukuRouter.get("/:id", buku.getById);
 // bukuRouter.post("/", buku.insert);
 // bukuRouter.put("/:id", buku.update);

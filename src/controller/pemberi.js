@@ -38,6 +38,11 @@ const pemberi = {
             token: token
         })
     },
+    beriDonasi: async function (req, res) {
+        return res.status(200).send({
+            message: "Donasi Link "+req.params.penerima
+        }) 
+    },
     tesAuth: async function (req, res) {
         return res.status(200).send({
             message: "Authentication Sukses"
