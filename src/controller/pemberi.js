@@ -6,6 +6,7 @@ require('dotenv').config();
 const userFunctions = require("../functions/user_functions")
 const transactionFunctions = require("../functions/transaction_functions")
 const joiFunctions = require("../functions/joi_functions")
+const dateFunctions = require("../functions/date_functions")
 
 const pemberi = {
     login: async function (req, res) {
@@ -54,13 +55,15 @@ const pemberi = {
             return res.status(400).send({ message: error.toString() })
         }
         const {amount} = req.body;
-        const {penerima} = req.body;
-        const result = (
+        const {penerima} = req.params;
+        const id = await transactionFunctions.generateDonationId(dateFunctions.todayDate())  
+        const oy = (
             await axios.post(
                 `${process.env.OY_BASE_URL}/api/payment-checkout/create-v2`,
                 {
                     "description": "Donation to "+penerima,
-                    "partner_tx_id": "",
+                    "partner_tx_id": id,
+                    "notes": "Donation to "+penerima,
                     "sender_name": req.user.username,
                     "amount": amount,
                     "email": req.user.email,
@@ -71,7 +74,7 @@ const pemberi = {
                     "list_disabled_payment_methods": "",
                     "list_enabled_banks": "002, 008, 009, 013, 022",
                     "list_enabled_ewallet": "shopeepay_ewallet",
-                    "expiration": "2023-06-14 13:00:00"
+                    "expiration": dateFunctions.expirationDate(3)
                 },
                 {
                     headers: {
@@ -82,9 +85,25 @@ const pemberi = {
                 }
             )
         ).data;
-
+        const cut = transactionFunctions.getCut(amount, 10);
+        const total = amount - cut;
+        await db.Transaction.create({
+            id_transaksi: id,
+            receiver: penerima,
+            donator: req.user.username,
+            type: "donation",
+            amount: amount,
+            cut: cut,
+            total: total,
+            link_transaksi: oy.url,
+            status: "pending"
+        })
         return res.status(200).send({
-            message: "Donasi Link " + req.params.penerima
+            message: `Link Donasi ke ${req.params.penerima} sukses`,
+            id_transaksi: id,
+            amount: amount,
+            link: oy.url,
+            status: "pending"
         })
     },
     tesAuth: async function (req, res) {
