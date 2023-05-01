@@ -39,8 +39,12 @@ const penerima = {
         })
     },
     getLink: async function (req, res) {
+        const user = req.user;
         return res.status(200).send({
-            message: "Welcome Back, "
+            message: "Link Donasi Berhasil Digenerate!",
+            display_name: user.display_name,
+            desc: user.desc,
+            link: `${process.env.BASE_URL}/api/pemberi/beri-donasi/${user.username}`
         }) 
     },
     tesAuth: async function (req, res) {
