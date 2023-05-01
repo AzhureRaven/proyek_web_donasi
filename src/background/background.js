@@ -23,15 +23,19 @@ const backgroundFunctions = {
                     }
                 )
             ).data;
-            if(oy.data.status == "complete"){
-                console.log(`${t.id_transaksi} complete`)
-                t.status = "complete";
-                t.save();
-            }
-            else if(oy.data.status == "expired"){
-                console.log(`${t.id_transaksi} expired`)
-                t.status = "expired";
-                t.save();
+            try {
+                if(oy.data.status == "complete"){
+                    console.log(`${t.id_transaksi} complete`)
+                    t.status = "complete";
+                    t.save();
+                }
+                else if(oy.data.status == "expired"){
+                    console.log(`${t.id_transaksi} expired`)
+                    t.status = "expired";
+                    t.save();
+                }
+            } catch (error) {
+                console.log(error.toString())
             }
         }
     }

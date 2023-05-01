@@ -85,6 +85,12 @@ const pemberi = {
                 }
             )
         ).data;
+        if(oy.status == false){
+            return res.status(500).send({
+                message: "Maaf! Proses donasi terjadi masalah internal! Mohon dicoba lagi.",
+                error: oy.message
+            })
+        }
         const cut = transactionFunctions.getCut(amount, 10);
         const total = amount - cut;
         await db.Transaction.create({
@@ -98,7 +104,7 @@ const pemberi = {
             link_transaksi: oy.url,
             status: "pending"
         })
-        return res.status(200).send({
+        return res.status(201).send({
             message: `Link Donasi ke ${req.params.penerima} sukses`,
             id_transaksi: id,
             amount: amount,
