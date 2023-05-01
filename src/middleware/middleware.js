@@ -7,11 +7,11 @@ const middleware = {
     cekToken: async function (req, res, next) {
         const token = req.header("x-auth-token");
         if (!token) {
-            return res.status(401).send("Token tidak ditemukan!");
+            return res.status(401).send({message: "Token tidak ditemukan!"});
         }
         const username = req.header("x-auth-username");
         if (!username) {
-            return res.status(401).send("Username tidak ditemukan!");
+            return res.status(401).send({message: "Username tidak ditemukan!"});
         }
         try {
             const verify = jwt.verify(token, process.env.JWT_SECRET); 
@@ -26,7 +26,7 @@ const middleware = {
             req.user = user;
             next();
         } catch (error) {
-            return res.status(400).send("Invalid API Key")
+            return res.status(400).send({message: "Invalid Token"})
         }  
     },
     cekPemberi: async function (req, res, next) {
