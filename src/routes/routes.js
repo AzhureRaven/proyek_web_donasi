@@ -2,9 +2,11 @@ const express = require("express");
 const pemberi = require("../controller/pemberi");
 const penerima = require("../controller/penerima");
 const apiRouter = express.Router();
+const middleware = require("../middleware/middleware");
 
 const penerimaRouter = express.Router();
 penerimaRouter.post("/login", penerima.login);
+penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.getLink)
 // kategoriBukuRouter.get("/", kategoriBuku.getAll);
 // kategoriBukuRouter.get("/:id", kategoriBuku.getById);
 // kategoriBukuRouter.post("/", kategoriBuku.insert);

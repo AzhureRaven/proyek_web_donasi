@@ -37,6 +37,11 @@ const penerima = {
             message: "Welcome Back, "+user.display_name,
             token: token
         })
+    },
+    getLink: async function (req, res) {
+        return res.status(200).send({
+            message: "Welcome Back, "
+        }) 
     }
 }
 
