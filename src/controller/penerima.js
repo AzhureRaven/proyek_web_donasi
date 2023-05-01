@@ -42,6 +42,11 @@ const penerima = {
         return res.status(200).send({
             message: "Welcome Back, "
         }) 
+    },
+    tesAuth: async function (req, res) {
+        return res.status(200).send({
+            message: "Authentication Sukses"
+        }) 
     }
 }
 

@@ -13,12 +13,16 @@ penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima],
 // kategoriBukuRouter.put("/:id", kategoriBuku.update);
 // kategoriBukuRouter.delete("/:id", kategoriBuku.delete);
 
+penerimaRouter.get("/tes-auth",[middleware.cekToken, middleware.cekPenerima], penerima.tesAuth) //buat tes middleware
+
 const pemberiRouter = express.Router();
 pemberiRouter.post("/login", pemberi.login);
 // bukuRouter.get("/:id", buku.getById);
 // bukuRouter.post("/", buku.insert);
 // bukuRouter.put("/:id", buku.update);
 // bukuRouter.delete("/:id", buku.delete);
+
+pemberiRouter.get("/tes-auth",[middleware.cekToken, middleware.cekPemberi], pemberi.tesAuth)
 
 apiRouter.use("/api/pemberi", pemberiRouter);
 apiRouter.use("/api/penerima", penerimaRouter);

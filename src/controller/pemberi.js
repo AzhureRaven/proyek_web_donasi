@@ -37,6 +37,11 @@ const pemberi = {
             message: "Welcome Back, "+user.display_name,
             token: token
         })
+    },
+    tesAuth: async function (req, res) {
+        return res.status(200).send({
+            message: "Authentication Sukses"
+        }) 
     }
 }
 
