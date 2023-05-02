@@ -4,6 +4,8 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const userFunctions = require("../functions/user_functions")
+const transactionFunctions = require("../functions/transaction_functions")
+const joiFunctions = require("../functions/joi_functions")
 
 const penerima = {
     login: async function (req, res) {
@@ -37,6 +39,20 @@ const penerima = {
             message: "Welcome Back, "+user.display_name,
             token: token
         })
+    },
+    getLink: async function (req, res) {
+        const user = req.user;
+        return res.status(200).send({
+            message: "Link Donasi Berhasil Digenerate!",
+            display_name: user.display_name,
+            desc: user.desc,
+            link: `${process.env.BASE_URL}/api/pemberi/beri-donasi/${user.username}`
+        }) 
+    },
+    tesAuth: async function (req, res) {
+        return res.status(200).send({
+            message: "Authentication Sukses"
+        }) 
     }
 }
 
