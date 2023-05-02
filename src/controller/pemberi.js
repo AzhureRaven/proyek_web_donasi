@@ -116,6 +116,7 @@ const pemberi = {
         return res.status(200).send({
             message: "Authentication Sukses"
         })
+    },
     mencari_melihat_penerima_donasi: async function (req, res) {// endpoint ini hanya dapat dikases oleh user dengan role donatur
     // parameter yang diterima dari body : username (username dapat berupa username dan email seperti login)
 
