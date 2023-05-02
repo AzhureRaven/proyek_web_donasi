@@ -1,5 +1,5 @@
 const dateFunctions = {
-    todayDate: () => {
+    todayDate: () => { //function untuk mendapat hari ini dalam format yyyy-mm-dd hh:mm:ss
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -10,7 +10,7 @@ const dateFunctions = {
         const date = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         return date;
     },
-    expirationDate: (days) => {
+    expirationDate: (days) => { //function untuk mendapat hari ini + days dalam format yyyy-mm-dd hh:mm:ss
         const today = new Date();
         today.setDate(today.getDate() + days);
         const year = today.getFullYear();

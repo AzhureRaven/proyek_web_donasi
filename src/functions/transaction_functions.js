@@ -1,11 +1,11 @@
 const db = require("../models");
 
 const transactionFunctions = {
-    getCut: (number, percentage) => {
+    getCut: (number, percentage) => { //function untuk menghitung potongan number dari percentage
         const cut = (number * percentage) / 100;
         return cut;
     },
-    generateDonationId: async (date) => {
+    generateDonationId: async (date) => { //function untuk generate donation id, menerima date dari date_functions
         const count = await db.Transaction.count({
             where: {
                 type: "donation",
@@ -17,7 +17,7 @@ const transactionFunctions = {
         const id = `DNT${date.slice(0, 10).replace(/-/g, "")}${(count + 1).toString().padStart(3, '0')}`;
         return id;
     },
-    generateTransferId: async (date) => {
+    generateTransferId: async (date) => { //function untuk generate transfer id, menerima date dari date_functions
         const count = await db.Transaction.count({
             where: {
                 type: "transfer",
@@ -29,7 +29,7 @@ const transactionFunctions = {
         const id = `TRF${date.slice(0, 10).replace(/-/g, "")}${(count + 1).toString().padStart(3, '0')}`;
         return id;
     },
-    calculateSaldo: async (username) =>{
+    calculateSaldo: async (username) =>{ //function untuk menghitung saldo Penerima Donasi, menerima usernamenya
         const donations = await db.Transaction.sum('total', {
             where:{
                 receiver: username,

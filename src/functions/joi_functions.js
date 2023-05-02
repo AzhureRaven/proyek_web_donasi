@@ -3,7 +3,7 @@ const Joi = require("joi").extend(require('@joi/date'));
 const userFunctions = require("./user_functions");
 
 const joiFunctions = {
-    cekPenerima: async (username) => {
+    cekPenerima: async (username) => { //external joi untuk cek username punya Penerima Donasi
         const user = await userFunctions.getUser(username);
         if(!user){
             throw new Error("User tidak ditemukan!");
