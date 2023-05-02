@@ -98,16 +98,16 @@ const pemberi = {
             receiver: penerima,
             donator: req.user.username,
             type: "donation",
-            amount: amount,
-            cut: cut,
-            total: total,
+            amount: parseInt(amount),
+            cut: parseInt(cut),
+            total: parseInt(total),
             link_transaksi: oy.url,
             status: "pending"
         })
         return res.status(201).send({
             message: `Link Donasi ke ${req.params.penerima} sukses`,
             id_transaksi: id,
-            amount: amount,
+            amount: parseInt(amount),
             link: oy.url,
             status: "pending"
         })
@@ -116,6 +116,7 @@ const pemberi = {
         return res.status(200).send({
             message: "Authentication Sukses"
         })
+    },
     mencari_melihat_penerima_donasi: async function (req, res) {// endpoint ini hanya dapat dikases oleh user dengan role donatur
     // parameter yang diterima dari body : username (username dapat berupa username dan email seperti login)
 
