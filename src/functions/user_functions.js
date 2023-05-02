@@ -2,10 +2,10 @@ const db = require("../models");
 const { createHash } = require('crypto');
 
 const userFunctions = {
-    hash: function(string) {
+    hash: (string) => {
         return createHash('sha256').update(string).digest('hex');
     },
-    getUser: async function(username){
+    getUser: async (username) => {
         return await db.User.findByPk(username);
     }
 }

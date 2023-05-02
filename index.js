@@ -26,14 +26,18 @@
 //npx sequelize-cli db:seed:all
 const express = require("express");
 const apiRouter = require("./src/routes/routes");
+const backgroundFunctions = require("./src/background/background");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(apiRouter)
+app.use(apiRouter);
 
 //cara pake dotenv
 require('dotenv').config()
 console.log(process.env.OY_USERNAME)
+
+//timer cek donasi sudah dibikin
+setInterval(backgroundFunctions.cekDonasi, 10000);
 
 const port = 3000;
 app.listen(port, function () { 

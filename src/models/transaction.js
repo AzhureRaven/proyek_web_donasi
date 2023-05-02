@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
     bank_account: {
       type: DataTypes.STRING
     },
+    link_transaksi: {
+      type: DataTypes.STRING
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false
