@@ -4,7 +4,7 @@ require('dotenv').config();
 const userFunctions = require("../functions/user_functions");
 
 const middleware = {
-    cekToken: async function (req, res, next) {
+    cekToken: async function (req, res, next) { //middleware ini digunakan untuk mengecek authentication dan authorization pengguna. Menerima x-auth-token dan x-auth-username di header. Kalau berhasil, akan diload data pengguna dan ditampung di req.user utk dipakai di endpoint. Middleware ini yang duluan. x-auth-username ada sebagai tambahan layer cek x-auth-token benar isinya
         const token = req.header("x-auth-token");
         if (!token) {
             return res.status(401).send({message: "Token tidak ditemukan!"});
@@ -29,7 +29,7 @@ const middleware = {
             return res.status(400).send({message: "Invalid Token"})
         }  
     },
-    cekPemberi: async function (req, res, next) {
+    cekPemberi: async function (req, res, next) { //middleware ini digunakan untuk ngecek role donator dalam x-auth-token pengguna. middlleware cekToken harus jalan dulu baru yang ini
         if (req.verify.role == "donator") {
             next();    
         }
@@ -37,7 +37,7 @@ const middleware = {
             return res.status(403).send({ message: "Jenis akun invalid!" })
         }
     },
-    cekPenerima: async function (req, res, next) {
+    cekPenerima: async function (req, res, next) {//middleware ini digunakan untuk ngecek role receiver dalam x-auth-token pengguna. middlleware cekToken harus jalan dulu baru yang ini
         if (req.verify.role == "receiver") {
             next();
         }
