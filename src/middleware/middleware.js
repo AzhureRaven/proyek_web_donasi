@@ -44,7 +44,53 @@ const middleware = {
         else{
             return res.status(403).send({ message: "Jenis akun invalid!" })
         }
-    }
+    },
+    cekAksesPemberi: async function (req, res, next) {// untuk mengecek hanya pemberi yang dapat mengakses halaman yang dituju
+        const token = req.header("x-auth-token");
+        if (!token) {
+            return res.status(401).send({message: "Token tidak ditemukan!"});
+        }
+
+        try{
+            const userdata = jwt.verify(token, process.env.JWT_SECRET)
+
+            if(userdata.role == 'donator'){
+                req.userdata = userdata
+                next();
+            }
+            else{
+                return res.status(403).send({
+                    message: 'Jenis akun invalid!'
+                })
+            }
+
+        } catch (error){
+            return res.status(400).send({message: "Invalid Token"})
+        }
+    },
+    cekAksesPenerima: async function (req, res, next) { // untuk mengecek hanya penerima yang dapat mengakses halaman yang dituju
+        const token = req.header("x-auth-token");
+        if (!token) {
+            return res.status(401).send({message: "Token tidak ditemukan!"});
+        }
+
+        try{
+            const userdata = jwt.verify(token, process.env.JWT_SECRET)
+
+            if(userdata.role == 'receiver'){
+                req.userdata = userdata
+                next();
+            }
+            else{
+                return res.status(403).send({
+                    message: 'Jenis akun invalid!'
+                })
+            }
+
+        } catch (error){
+            return res.status(400).send({message: "Invalid Token"})
+        }
+    },
 }
 
 module.exports = middleware;
