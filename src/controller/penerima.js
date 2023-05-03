@@ -53,6 +53,84 @@ const penerima = {
         return res.status(200).send({
             message: "Authentication Sukses"
         }) 
+    },
+    delete_acc: async function (req, res) { // endpoint ini digunakan untuk mendelete account, dan hanya user yang login di akun yang ingin dihapus yang dapat menghapus akunnya sendiri
+
+        const userdata = req.userdata;
+        const penerima = await db.User.findOne({
+            where: {
+                username: userdata.username,
+                role: "receiver"
+            }
+        });
+
+        if (!penerima) {
+            return res.status(404).send({message: "Tidak ada akun dengan username "+ userdata.username})
+        }
+
+        
+        const hapus_penerima = await db.User.destroy({
+            where: {
+                username: userdata.username,
+                role: "receiver"
+            }
+        });
+
+        return res.status(200).send({
+            message: "User dengan username "+userdata.username+" berhasil dihapus"
+        })
+    },
+    update_acc: async function (req, res) { // endpoint ini digunakan untuk mendelete account, dan hanya user yang login di akun yang ingin dihapus yang dapat menghapus akunnya sendiri
+        
+
+        const userdata = req.userdata;
+        const penerima = await db.User.findOne({
+            where: {
+                username: userdata.username,
+                role: "receiver"
+            }
+        });
+
+        if (!penerima) {
+            return res.status(404).send({message: "Tidak ada akun dengan username "+ userdata.username})
+        }
+
+        const {full_name, display_name, gender, desc, hp, tgl_lahir} = req.body;
+
+        const [day,month,year] = tgl_lahir.split('/');//format dd/mm/yyyy
+        
+        const date = new Date(+year, +month - 1, +day);
+
+        const update_data = await db.User.update(
+            {
+                full_name: full_name,
+                display_name:display_name,
+                gender:gender,
+                desc:desc,
+                hp:hp,
+                tgl_lahir:date,
+            },
+            {
+                where:{
+                    username:userdata.username
+                }
+            }
+        );
+
+        const body = {
+            full_name: full_name,
+            display_name:display_name,
+            gender:gender,
+            desc:desc,
+            hp:hp,
+            tgl_lahir:tgl_lahir,
+        }
+        
+
+        return res.status(200).send({
+            message: "User dengan username "+userdata.username+" berhasil diupdate",
+            body
+        })
     }
 }
 
