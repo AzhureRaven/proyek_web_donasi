@@ -9,6 +9,8 @@ penerimaRouter.post("/login", penerima.login);
 penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.getLink)
 penerimaRouter.delete("/delete-acc",[middleware.cekAksesPenerima], penerima.delete_acc);
 penerimaRouter.put("/update-acc",[middleware.cekAksesPenerima], penerima.update_acc);
+penerimaRouter.get("/link-donasi", [middleware.cekToken, middleware.cekPenerima], penerima.getLink);
+penerimaRouter.post("/transfer", [middleware.cekToken, middleware.cekPenerima], penerima.transfer);
 // kategoriBukuRouter.get("/", kategoriBuku.getAll);
 // kategoriBukuRouter.get("/:id", kategoriBuku.getById);
 // kategoriBukuRouter.post("/", kategoriBuku.insert);
