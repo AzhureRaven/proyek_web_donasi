@@ -41,6 +41,57 @@ const pemberi = {
             token: token
         })
     },
+    Register: async function (req, res) {
+        const schema = Joi.object({
+            username: Joi.string().required(),
+            password: Joi.string().required(),
+            fullname: Joi.string().required(),
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            gender: Joi.string().valid('M','F').required(),
+            description: Joi.string().required(),
+            phone_number: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
+            tanggal_lahir: Joi.date().format('YYYY-MM-DD').required(),
+        })
+        try {
+            await schema.validateAsync(req.body)
+        } catch (error) {
+            return res.status(400).send({ message: error.toString() })
+        }
+        
+        const { username, password,fullname,name, email, gender, description, phone_number, tanggal_lahir } = req.body;
+        const user = await db.User.findOne({
+            where: {
+                [db.Op.or]: [{ username: username }],
+
+            }
+        });
+        if (user) {
+            return res.status(404).send({ message: "Username sudah dipakai" });
+        }
+        // return res.status(200).send({ message: "unique" });
+        let gen= ""
+        if (gender =='M'){
+            gen = "Male"
+        }
+        else{
+            gen = "Female"
+        }
+
+        const newUser = await db.User.create({
+             username: username,
+             email: email,
+                password: userFunctions.hash(password),
+                full_name: fullname,
+                display_name: name,
+                gender:gen,
+                desc:description,
+                hp:phone_number,
+                tgl_lahir:tanggal_lahir,
+                role: "donator"
+        });
+        return res.status(201).send({ message: "User berhasil dibuat!"});
+    },
     beriDonasi: async function (req, res) {
         const schemaBody = Joi.object({
             amount: Joi.number().min(10000).required(),

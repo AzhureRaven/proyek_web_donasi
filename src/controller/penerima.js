@@ -92,6 +92,18 @@ const penerima = {
         });
         return res.status(201).send({ message: "User berhasil dibuat!"});
     },
+    Profile: async function (req,res ){
+        const userdata = req.userdata;
+        // const penerima = await db.User.findOne({
+        //     where: {
+        //         username: userdata.username,
+        //         role: "receiver"
+        //     }
+        // });
+        return res.status(200).send({
+            userdata:userdata
+        });
+    },
     getLink: async function (req, res) {
         const user = req.user;
         return res.status(200).send({
