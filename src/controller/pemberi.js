@@ -92,6 +92,9 @@ const pemberi = {
         });
         return res.status(201).send({ message: "User berhasil dibuat!"});
     },
+    Profile: async function (req,res ){
+            
+    },
     beriDonasi: async function (req, res) {
         const schemaBody = Joi.object({
             amount: Joi.number().min(10000).required(),
