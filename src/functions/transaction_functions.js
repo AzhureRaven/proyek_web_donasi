@@ -33,7 +33,8 @@ const transactionFunctions = {
         const donations = await db.Transaction.sum('total', {
             where:{
                 receiver: username,
-                type: "donation"
+                type: "donation",
+                status: "complete"
             }
         })
         const transfers = await db.Transaction.sum("amount", {
