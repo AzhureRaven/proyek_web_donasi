@@ -6,6 +6,8 @@ const middleware = require("../middleware/middleware");
 
 const penerimaRouter = express.Router();
 penerimaRouter.post("/login", penerima.login);
+penerimaRouter.post("/register", penerima.Register);
+penerimaRouter.get("/profile",[middleware.cekToken, middleware.cekPenerima], penerima.Profile);
 penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.getLink)
 penerimaRouter.delete("/delete-acc",[middleware.cekAksesPenerima], penerima.delete_acc);
 penerimaRouter.put("/update-acc",[middleware.cekAksesPenerima], penerima.update_acc);
@@ -21,6 +23,8 @@ penerimaRouter.get("/tes-auth",[middleware.cekToken, middleware.cekPenerima], pe
 
 const pemberiRouter = express.Router();
 pemberiRouter.post("/login", pemberi.login);
+pemberiRouter.post("/register", pemberi.Register);
+pemberiRouter.get("/profile",[middleware.cekToken, middleware.cekPemberi], pemberi.Profile);
 pemberiRouter.post("/beri-donasi/:penerima", [middleware.cekToken, middleware.cekPemberi], pemberi.beriDonasi);
 pemberiRouter.get("/find-receiver",[middleware.cekAksesPemberi], pemberi.mencari_melihat_penerima_donasi);
 pemberiRouter.delete("/delete-acc",[middleware.cekAksesPemberi], pemberi.delete_acc);
