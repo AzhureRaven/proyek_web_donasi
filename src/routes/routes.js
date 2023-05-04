@@ -6,6 +6,7 @@ const middleware = require("../middleware/middleware");
 
 const penerimaRouter = express.Router();
 penerimaRouter.post("/login", penerima.login);
+penerimaRouter.post("/register", penerima.Register);
 penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.getLink)
 penerimaRouter.delete("/delete-acc",[middleware.cekAksesPenerima], penerima.delete_acc);
 penerimaRouter.put("/update-acc",[middleware.cekAksesPenerima], penerima.update_acc);
