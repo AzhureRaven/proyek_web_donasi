@@ -168,6 +168,20 @@ const penerima = {
             return res.status(404).send({message: "Tidak ada akun dengan username "+ userdata.username})
         }
 
+        const schema = Joi.object({
+            full_name: Joi.string().required(),
+            display_name: Joi.string().required(),
+            gender: Joi.string().valid('Male','Female').required(),
+            desc: Joi.string().required(),
+            hp: Joi.string().min(9).max(12).pattern(/^[0-9]+$/).required(),
+            tgl_lahir: Joi.date().format('DD/MM/YYYY').required(),
+        })
+        try {
+            await schema.validateAsync(req.body)
+        } catch (error) {
+            return res.status(400).send({message: error.toString()})
+        }
+        
         const {full_name, display_name, gender, desc, hp, tgl_lahir} = req.body;
 
         const [day,month,year] = tgl_lahir.split('/');//format dd/mm/yyyy
