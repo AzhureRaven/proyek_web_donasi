@@ -139,7 +139,7 @@ const penerima = {
                 total_d += history[i].total
             }
             else{
-                total_t += history[i].total
+                total_t += history[i].amount
             }
 
             hist.push(data)
