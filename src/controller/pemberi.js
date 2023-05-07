@@ -111,6 +111,36 @@ const pemberi = {
             profile:profile
         });
     },
+    History: async function (req,res){
+        const user = req.user;
+        const history = await db.Transaction.findAll({
+            where: {
+                donator: user.username
+            }
+        });
+        let total = 0;
+        let hist = []
+        for (let i = 0; i < history.length; i++) {
+            let tanggal = history[i].createdAt;
+            tanggal = tanggal.toISOString().split('T')[0];
+            // let waktu = tanggal.toISOString().split('Z')[0];
+            let data ={
+                id : history[i].id_transaksi,
+                receiver : history[i].receiver,
+                amount : history[i].amount,
+                status : history[i].status,
+                date : tanggal,
+                link : history[i].link_transaksi
+            }
+            total += history[i].amount;
+            hist.push(data)
+        }
+        
+        return res.status(200).send({
+            total_donasi:total,
+            history:hist
+        });
+    },
     beriDonasi: async function (req, res) {
         const schemaBody = Joi.object({
             amount: Joi.number().min(10000).required(),

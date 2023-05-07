@@ -111,6 +111,70 @@ const penerima = {
             profile:profile
         });
     },
+    HistoryD: async function (req,res){
+        const user = req.user;
+        const history = await db.Transaction.findAll({
+            where: {
+                receiver: user.username,
+                type : "donation"
+            }
+        })
+        let total = 0;
+        const saldo = await transactionFunctions.calculateSaldo(req.user.username)
+        let hist = []
+        for (let i = 0; i < history.length; i++) {
+            let tanggal = history[i].createdAt;
+            tanggal = tanggal.toISOString().split('T')[0];
+            // let waktu = tanggal.toISOString().split('Z')[0];
+            let data ={
+                id_transaksi : history[i].id_transaksi,
+                donator : history[i].donator,
+                cut : history[i].cut,
+                total : history[i].total,
+                date : tanggal,
+            }
+            total += history[i].total
+            hist.push(data)
+        }
+        
+        return res.status(200).send({
+            total_donasi_yang_diterima : total,
+            saldo : saldo,
+            history:hist
+        });
+    },
+    HistoryT: async function (req,res){
+        const user = req.user;
+        const history = await db.Transaction.findAll({
+            where: {
+                receiver: user.username,
+                type : "transfer"
+            }
+        })
+        let total = 0;
+        const saldo = await transactionFunctions.calculateSaldo(req.user.username)
+        let hist = []
+        for (let i = 0; i < history.length; i++) {
+            let tanggal = history[i].createdAt;
+            tanggal = tanggal.toISOString().split('T')[0];
+            // let waktu = tanggal.toISOString().split('Z')[0];
+            let data ={
+                id_transaksi : history[i].id_transaksi,
+                donator : history[i].donator,
+                cut : history[i].cut,
+                total : history[i].total,
+                date : tanggal,
+            }
+            total += history[i].total
+            hist.push(data)
+        }
+        
+        return res.status(200).send({
+            total_transfer : total,
+            saldo : saldo ,
+            history:hist
+        });
+    },
     getLink: async function (req, res) {
         const user = req.user;
         return res.status(200).send({
