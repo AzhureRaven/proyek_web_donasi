@@ -9,6 +9,7 @@ penerimaRouter.post("/login", penerima.login);
 penerimaRouter.post("/register", penerima.Register);
 penerimaRouter.get("/history-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.HistoryD);
 penerimaRouter.get("/history-transfer",[middleware.cekToken, middleware.cekPenerima], penerima.HistoryT);
+penerimaRouter.get("/history",[middleware.cekToken, middleware.cekPenerima], penerima.History);
 penerimaRouter.get("/profile",[middleware.cekToken, middleware.cekPenerima], penerima.Profile);
 penerimaRouter.get("/link-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.getLink)
 penerimaRouter.delete("/delete-acc",[middleware.cekAksesPenerima], penerima.delete_acc);

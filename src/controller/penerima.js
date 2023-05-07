@@ -111,6 +111,47 @@ const penerima = {
             profile:profile
         });
     },
+    History: async function (req,res){
+        const user = req.user;
+        const history = await db.Transaction.findAll({
+            where: {
+                receiver: user.username,
+            }
+        })
+        let total_d = 0;
+        let total_t = 0;
+        const saldo = await transactionFunctions.calculateSaldo(req.user.username)
+        let hist = []
+        for (let i = 0; i < history.length; i++) {
+            let tanggal = history[i].createdAt;
+            tanggal = tanggal.toISOString().split('T')[0];
+            // let waktu = tanggal.toISOString().split('Z')[0];
+            let data ={
+                id_transaksi : history[i].id_transaksi,
+                donator : history[i].donator,
+                amount : history[i].amount,
+                cut : history[i].cut,
+                total : history[i].total,
+                type : history[i].type,
+                date : tanggal,
+            }
+            if (history[i].type == "donation"){
+                total_d += history[i].total
+            }
+            else{
+                total_t += history[i].total
+            }
+
+            hist.push(data)
+        }
+        
+        return res.status(200).send({
+            total_donasi_yang_diterima : total_d,
+            total_transfer : total_t,
+            saldo : saldo,
+            history:hist
+        });
+    },
     HistoryD: async function (req,res){
         const user = req.user;
         const history = await db.Transaction.findAll({
@@ -129,6 +170,7 @@ const penerima = {
             let data ={
                 id_transaksi : history[i].id_transaksi,
                 donator : history[i].donator,
+                amount : history[i].amount,
                 cut : history[i].cut,
                 total : history[i].total,
                 date : tanggal,
@@ -161,6 +203,7 @@ const penerima = {
             let data ={
                 id_transaksi : history[i].id_transaksi,
                 donator : history[i].donator,
+                amount : history[i].amount,
                 cut : history[i].cut,
                 total : history[i].total,
                 date : tanggal,
