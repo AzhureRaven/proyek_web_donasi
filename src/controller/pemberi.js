@@ -94,6 +94,8 @@ const pemberi = {
     },
     Profile: async function (req,res ){
         const userdata = req.user;
+        let tanggal_lahir = userdata.tgl_lahir ;
+        tanggal_lahir = tanggal_lahir.toISOString().split('T')[0];
         let profile ={
             username: userdata.username,
             email: userdata.email,
@@ -102,7 +104,7 @@ const pemberi = {
             gender: userdata.gender,
             description: userdata.desc,
             phone_number: userdata.hp,
-            tanggal_lahir: userdata.tgl_lahir,
+            tanggal_lahir: tanggal_lahir,
             role: userdata.role
         }
         return res.status(200).send({
