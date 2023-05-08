@@ -23,7 +23,8 @@ module.exports = {
         "desc": "Azhure Raven's Profile",
         "hp": "85231070657",
         "tgl_lahir": "2022-02-17",
-        "role": "receiver"
+        "role": "receiver",
+        "ktp": null
       },
       {
         "username": "ArthurFendy",
@@ -35,7 +36,8 @@ module.exports = {
         "desc": "Arthur Fendy's Profile",
         "hp": "85231070657",
         "tgl_lahir": "2022-02-17",
-        "role": "donator"
+        "role": "donator",
+        "ktp": null
       },
       {
         "username": "Erland",
@@ -47,7 +49,8 @@ module.exports = {
         "desc": "Erland's Profile",
         "hp": "85231070657",
         "tgl_lahir": "2022-05-20",
-        "role": "donator"
+        "role": "donator",
+        "ktp": null
       },
     ], {})
   },
