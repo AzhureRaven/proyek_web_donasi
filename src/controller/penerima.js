@@ -2,11 +2,13 @@ const db = require("../models");
 const Joi = require("joi").extend(require('@joi/date'));
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 require('dotenv').config();
 const userFunctions = require("../functions/user_functions")
 const transactionFunctions = require("../functions/transaction_functions")
 const joiFunctions = require("../functions/joi_functions")
 const dateFunctions = require("../functions/date_functions")
+const fileFunction = require("../functions/file_functions")
 
 const penerima = {
     login: async function (req, res) {
