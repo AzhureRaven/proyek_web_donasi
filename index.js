@@ -38,7 +38,7 @@ require('dotenv').config()
 console.log(process.env.OY_USERNAME)
 
 //timer cek donasi sudah dibikin
-setInterval(backgroundFunctions.cekDonasi, 10000);
+setInterval(backgroundFunctions.cekDonasi, 100000);
 
 const port = 3000;
 app.listen(port, function () { 

@@ -132,7 +132,7 @@ const pemberi = {
                 date : tanggal,
                 link : history[i].link_transaksi
             }
-            total += history[i].amount;
+            if(history[i].status == "complete") total += history[i].amount;
             hist.push(data)
         }
         

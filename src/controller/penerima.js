@@ -118,6 +118,7 @@ const penerima = {
         const history = await db.Transaction.findAll({
             where: {
                 receiver: user.username,
+                status: "complete"
             }
         })
         let total_d = 0;
@@ -159,7 +160,8 @@ const penerima = {
         const history = await db.Transaction.findAll({
             where: {
                 receiver: user.username,
-                type : "donation"
+                type : "donation",
+                status: "complete"
             }
         })
         let total = 0;
@@ -192,7 +194,8 @@ const penerima = {
         const history = await db.Transaction.findAll({
             where: {
                 receiver: user.username,
-                type : "transfer"
+                type : "transfer",
+                status: "complete"
             }
         })
         let total = 0;
