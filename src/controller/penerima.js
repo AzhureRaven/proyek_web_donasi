@@ -46,6 +46,10 @@ const penerima = {
         })
     },
     Register: async function (req, res) {
+        const uploadFunc = fileFunction.single("ktp");
+        uploadFunc(req, res, async function (err) {
+            // return res.status(404).send({ error: "wrong filetype"})
+        });
         const schema = Joi.object({
             username: Joi.string().required(),
             password: Joi.string().required(),
@@ -65,6 +69,7 @@ const penerima = {
         
         
         const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
+
         const user = await db.User.findOne({
             where: {
                 [db.Op.or]: [{ username: username }],
