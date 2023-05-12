@@ -46,65 +46,73 @@ const penerima = {
         })
     },
     Register: async function (req, res) {
-        const schema = Joi.object({
-            username: Joi.string().required(),
-            password: Joi.string().required(),
-            full_name: Joi.string().required(),
-            display_name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            gender: Joi.string().valid('M','F').required(),
-            desc: Joi.string().required(),
-            hp: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
-            tgl_lahir: Joi.date().format('YYYY-MM-DD').required(),
-        })
-        try {
-            await schema.validateAsync(req.body)
-        } catch (error) {
-            return res.status(400).send({ message: error.toString() })
-        }
-        
-        
-        const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
-        const user = await db.User.findOne({
-            where: {
-                [db.Op.or]: [{ username: username }],
-
+        const uploadFunc = fileFunction.single("ktp");
+        uploadFunc(req, res, async function (err) {
+            if (err) {
+              return res.status(400).send({ ...err, msg: "wrong filetype" });
             }
-        });
-        if (user) {
-            return res.status(404).send({ message: "Username sudah dipakai" });
-        }
-        const emal = await db.User.findOne({
-            where: {
-                [db.Op.or]: [{ email: email }],
-
+            const schema = Joi.object({
+                username: Joi.string().required(),
+                password: Joi.string().required(),
+                full_name: Joi.string().required(),
+                display_name: Joi.string().required(),
+                email: Joi.string().email().required(),
+                gender: Joi.string().valid('M','F').required(),
+                desc: Joi.string().required(),
+                hp: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
+                tgl_lahir: Joi.date().format('YYYY-MM-DD').required(),
+            })
+            try {
+                await schema.validateAsync(req.body)
+            } catch (error) {
+                return res.status(400).send({ message: error.toString() })
             }
+            
+            
+            const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
+            const user = await db.User.findOne({
+                where: {
+                    [db.Op.or]: [{ username: username }],
+    
+                }
+            });
+            if (user) {
+                return res.status(404).send({ message: "Username sudah dipakai" });
+            }
+            const emal = await db.User.findOne({
+                where: {
+                    [db.Op.or]: [{ email: email }],
+    
+                }
+            });
+            if (emal) {
+                return res.status(404).send({ message: "email sudah dipakai" });
+            }
+            // return res.status(200).send({ message: "unique" });
+            let gen= ""
+            if (gender =='M'){
+                gen = "Male"
+            }
+            else{
+                gen = "Female"
+            }
+    
+            const newUser = await db.User.create({
+                 username: username,
+                 email: email,
+                    password: userFunctions.hash(password),
+                    full_name: full_name,
+                    display_name: display_name,
+                    gender:gen,
+                    desc:desc,
+                    hp:hp,
+                    tgl_lahir:tgl_lahir,
+                    role: "receiver"
+            });
+            return res.status(201).send({ message: "User berhasil dibuat!"});
         });
-        if (emal) {
-            return res.status(404).send({ message: "email sudah dipakai" });
-        }
-        // return res.status(200).send({ message: "unique" });
-        let gen= ""
-        if (gender =='M'){
-            gen = "Male"
-        }
-        else{
-            gen = "Female"
-        }
 
-        const newUser = await db.User.create({
-             username: username,
-             email: email,
-                password: userFunctions.hash(password),
-                full_name: full_name,
-                display_name: display_name,
-                gender:gen,
-                desc:desc,
-                hp:hp,
-                tgl_lahir:tgl_lahir,
-                role: "receiver"
-        });
-        return res.status(201).send({ message: "User berhasil dibuat!"});
+        
     },
     Profile: async function (req,res ){
         const userdata = req.user;
