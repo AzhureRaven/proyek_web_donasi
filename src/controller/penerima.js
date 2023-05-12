@@ -62,7 +62,7 @@ const penerima = {
         } catch (error) {
             return res.status(400).send({ message: error.toString() })
         }
-        
+
         
         const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
         const user = await db.User.findOne({
@@ -104,7 +104,7 @@ const penerima = {
                 tgl_lahir:tgl_lahir,
                 role: "receiver"
         });
-        return res.status(201).send({ message: "User berhasil dibuat!"});
+        return res.status(201).send({ message: "User berhasil dibuat!"}); 
     },
     Profile: async function (req,res ){
         const userdata = req.user;
