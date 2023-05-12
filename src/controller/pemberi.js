@@ -62,12 +62,12 @@ const pemberi = {
         const { username, password,fullname,name, email, gender, description, phone_number, tanggal_lahir } = req.body;
         const user = await db.User.findOne({
             where: {
-                [db.Op.or]: [{ username: username }, { email: username }],
+                [db.Op.or]: [{ username: username }],
 
             }
         });
         if (user) {
-            return res.status(404).send({ message: "Username/Email sudah dipakai" });
+            return res.status(404).send({ message: "Username sudah dipakai" });
         }
         // return res.status(200).send({ message: "unique" });
         let gen= ""
