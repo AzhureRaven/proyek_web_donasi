@@ -3,9 +3,10 @@ const pemberi = require("../controller/pemberi");
 const penerima = require("../controller/penerima");
 const apiRouter = express.Router();
 const middleware = require("../middleware/middleware");
-
+const fileFunction = require("../functions/file_functions")
 const penerimaRouter = express.Router();
 penerimaRouter.post("/login", penerima.login);
+// penerimaRouter.post("/register",fileFunction.single("ktp"), penerima.Register);
 penerimaRouter.post("/register", penerima.Register);
 penerimaRouter.get("/history-donasi",[middleware.cekToken, middleware.cekPenerima], penerima.HistoryD);
 penerimaRouter.get("/history-transfer",[middleware.cekToken, middleware.cekPenerima], penerima.HistoryT);

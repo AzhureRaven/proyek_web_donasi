@@ -10,6 +10,8 @@ const joiFunctions = require("../functions/joi_functions")
 const dateFunctions = require("../functions/date_functions")
 const fileFunction = require("../functions/file_functions")
 
+
+
 const penerima = {
     login: async function (req, res) {
         const schema = Joi.object({
@@ -47,13 +49,13 @@ const penerima = {
         const schema = Joi.object({
             username: Joi.string().required(),
             password: Joi.string().required(),
-            fullname: Joi.string().required(),
-            name: Joi.string().required(),
+            full_name: Joi.string().required(),
+            display_name: Joi.string().required(),
             email: Joi.string().email().required(),
             gender: Joi.string().valid('M','F').required(),
-            description: Joi.string().required(),
-            phone_number: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
-            tanggal_lahir: Joi.date().format('YYYY-MM-DD').required(),
+            desc: Joi.string().required(),
+            hp: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
+            tgl_lahir: Joi.date().format('YYYY-MM-DD').required(),
         })
         try {
             await schema.validateAsync(req.body)
@@ -61,7 +63,8 @@ const penerima = {
             return res.status(400).send({ message: error.toString() })
         }
         
-        const { username, password,fullname,name, email, gender, description, phone_number, tanggal_lahir } = req.body;
+        
+        const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
         const user = await db.User.findOne({
             where: {
                 [db.Op.or]: [{ username: username }],
@@ -70,6 +73,15 @@ const penerima = {
         });
         if (user) {
             return res.status(404).send({ message: "Username sudah dipakai" });
+        }
+        const emal = await db.User.findOne({
+            where: {
+                [db.Op.or]: [{ email: email }],
+
+            }
+        });
+        if (emal) {
+            return res.status(404).send({ message: "email sudah dipakai" });
         }
         // return res.status(200).send({ message: "unique" });
         let gen= ""
@@ -84,12 +96,12 @@ const penerima = {
              username: username,
              email: email,
                 password: userFunctions.hash(password),
-                full_name: fullname,
-                display_name: name,
+                full_name: full_name,
+                display_name: display_name,
                 gender:gen,
-                desc:description,
-                hp:phone_number,
-                tgl_lahir:tanggal_lahir,
+                desc:desc,
+                hp:hp,
+                tgl_lahir:tgl_lahir,
                 role: "receiver"
         });
         return res.status(201).send({ message: "User berhasil dibuat!"});
