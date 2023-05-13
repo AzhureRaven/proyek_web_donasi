@@ -86,7 +86,7 @@ const penerima = {
             }
         });
         if (emal) {
-            return res.status(404).send({ message: "email sudah dipakai" });
+            return res.status(404).send({ message: "Email sudah dipakai" });
         }
         // return res.status(200).send({ message: "unique" });
         let gen= ""
@@ -121,10 +121,11 @@ const penerima = {
             full_name: userdata.full_name,
             display_name: userdata.display_name,
             gender: userdata.gender,
-            description: userdata.desc,
-            phone_number: userdata.hp,
-            tanggal_lahir: tanggal_lahir,
-            role: userdata.role
+            desc: userdata.desc,
+            hp: userdata.hp,
+            tgl_lahir: tanggal_lahir,
+            role: userdata.role,
+            ktp: userdata.ktp
         }
         return res.status(200).send({
             profile:profile
