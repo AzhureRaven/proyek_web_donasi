@@ -29,7 +29,7 @@ const apiRouter = require("./src/routes/routes");
 const backgroundFunctions = require("./src/background/background");
 const app = express();
 app.use(express.json());
-//app.use("./src/assets", express.static("public"));
+app.use("/assets", express.static("public"));
 app.use(express.urlencoded({ extended: true }))
 app.use(apiRouter);
 

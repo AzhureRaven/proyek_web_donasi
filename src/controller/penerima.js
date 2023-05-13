@@ -48,74 +48,82 @@ const penerima = {
     Register: async function (req, res) {
         const uploadFunc = fileFunction.single("ktp");
         uploadFunc(req, res, async function (err) {
-            // return res.status(404).send({ error: "wrong filetype"})
-        });
-        const schema = Joi.object({
-            username: Joi.string().required(),
-            password: Joi.string().required(),
-            full_name: Joi.string().required(),
-            display_name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            gender: Joi.string().valid('M','F').required(),
-            desc: Joi.string().required(),
-            hp: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
-            tgl_lahir: Joi.date().format('YYYY-MM-DD').required(),
-        })
-        try {
-            await schema.validateAsync(req.body)
-        } catch (error) {
-            return res.status(400).send({ message: error.toString() })
-        }
-        
-        
-        const { username, password,full_name,display_name, email, gender, desc, hp, tgl_lahir } = req.body;
-
-        const user = await db.User.findOne({
-            where: {
-                [db.Op.or]: [{ username: username }],
-
+            if (err) {
+                return res.status(400).send({ ...err, msg: "Wrong filetype (png/jpg)" });
             }
-        });
-        if (user) {
-            return res.status(404).send({ message: "Username sudah dipakai" });
-        }
-        const emal = await db.User.findOne({
-            where: {
-                [db.Op.or]: [{ email: email }],
-
+            const schema = Joi.object({
+                username: Joi.string().required(),
+                password: Joi.string().required(),
+                full_name: Joi.string().required(),
+                display_name: Joi.string().required(),
+                email: Joi.string().email().required(),
+                gender: Joi.string().valid('M', 'F').required(),
+                desc: Joi.string().required(),
+                hp: Joi.string().required().pattern(/^[0-9]+$/).min(9).max(12),
+                tgl_lahir: Joi.date().format('YYYY-MM-DD').required(),
+            })
+            try {
+                await schema.validateAsync(req.body)
+            } catch (error) {
+                return res.status(400).send({ message: error.toString() })
             }
-        });
-        if (emal) {
-            return res.status(404).send({ message: "Email sudah dipakai" });
-        }
-        // return res.status(200).send({ message: "unique" });
-        let gen= ""
-        if (gender =='M'){
-            gen = "Male"
-        }
-        else{
-            gen = "Female"
-        }
+            const { username, password, full_name, display_name, email, gender, desc, hp, tgl_lahir } = req.body;
+            const user = await db.User.findOne({
+                where: {
+                    [db.Op.or]: [{ username: username }],
 
-        const newUser = await db.User.create({
-             username: username,
-             email: email,
+                }
+            });
+            if (user) {
+                fs.unlinkSync(`./src/assets/${req.file.filename}`);
+                return res.status(404).send({ message: "Username sudah dipakai" });
+            }
+            const emal = await db.User.findOne({
+                where: {
+                    [db.Op.or]: [{ email: email }],
+
+                }
+            });
+            if (emal) {
+                fs.unlinkSync(`./src/assets/${req.file.filename}`);
+                return res.status(404).send({ message: "Email sudah dipakai" });
+            }
+            let gen = ""
+            if (gender == 'M') {
+                gen = "Male"
+            }
+            else {
+                gen = "Female"
+            }
+            let extArray = req.file.mimetype.split("/");
+            let extension = extArray[extArray.length - 1];
+            const newFilename = `${username}.${extension}`;
+            fs.renameSync(
+                `./src/assets/${req.file.filename}`,
+                `./public/ktp/${newFilename}`
+            );
+            const newUser = await db.User.create({
+                username: username,
+                email: email,
                 password: userFunctions.hash(password),
                 full_name: full_name,
                 display_name: display_name,
-                gender:gen,
-                desc:desc,
-                hp:hp,
-                tgl_lahir:tgl_lahir,
-                role: "receiver"
+                gender: gen,
+                desc: desc,
+                hp: hp,
+                tgl_lahir: tgl_lahir,
+                role: "receiver",
+                ktp: `/assets/ktp/${newFilename}`
+            });
+            return res.status(201).send({ message: "User berhasil dibuat!" });
         });
-        return res.status(201).send({ message: "User berhasil dibuat!"});
+
     },
-    Profile: async function (req,res ){
+    Profile: async function (req, res) {
         const userdata = req.user;
-        let tanggal_lahir = userdata.tgl_lahir ;
+        let tanggal_lahir = userdata.tgl_lahir;
         tanggal_lahir = tanggal_lahir.toISOString().split('T')[0];
-        let profile ={
+        let profile = {
             username: userdata.username,
             email: userdata.email,
             full_name: userdata.full_name,
@@ -128,10 +136,10 @@ const penerima = {
             ktp: userdata.ktp
         }
         return res.status(200).send({
-            profile:profile
+            profile: profile
         });
     },
-    History: async function (req,res){
+    History: async function (req, res) {
         const user = req.user;
         const history = await db.Transaction.findAll({
             where: {
@@ -147,38 +155,38 @@ const penerima = {
             let tanggal = history[i].createdAt;
             tanggal = tanggal.toISOString().split('T')[0];
             // let waktu = tanggal.toISOString().split('Z')[0];
-            let data ={
-                id_transaksi : history[i].id_transaksi,
-                donator : history[i].donator,
-                amount : history[i].amount,
-                cut : history[i].cut,
-                total : history[i].total,
-                type : history[i].type,
-                date : tanggal,
+            let data = {
+                id_transaksi: history[i].id_transaksi,
+                donator: history[i].donator,
+                amount: history[i].amount,
+                cut: history[i].cut,
+                total: history[i].total,
+                type: history[i].type,
+                date: tanggal,
             }
-            if (history[i].type == "donation"){
+            if (history[i].type == "donation") {
                 total_d += history[i].total
             }
-            else{
+            else {
                 total_t += history[i].amount
             }
 
             hist.push(data)
         }
-        
+
         return res.status(200).send({
-            total_donasi_yang_diterima : total_d,
-            total_transfer : total_t,
-            saldo : saldo,
-            history:hist
+            total_donasi_yang_diterima: total_d,
+            total_transfer: total_t,
+            saldo: saldo,
+            history: hist
         });
     },
-    HistoryD: async function (req,res){
+    HistoryD: async function (req, res) {
         const user = req.user;
         const history = await db.Transaction.findAll({
             where: {
                 receiver: user.username,
-                type : "donation",
+                type: "donation",
                 status: "complete"
             }
         })
@@ -189,30 +197,30 @@ const penerima = {
             let tanggal = history[i].createdAt;
             tanggal = tanggal.toISOString().split('T')[0];
             // let waktu = tanggal.toISOString().split('Z')[0];
-            let data ={
-                id_transaksi : history[i].id_transaksi,
-                donator : history[i].donator,
-                amount : history[i].amount,
-                cut : history[i].cut,
-                total : history[i].total,
-                date : tanggal,
+            let data = {
+                id_transaksi: history[i].id_transaksi,
+                donator: history[i].donator,
+                amount: history[i].amount,
+                cut: history[i].cut,
+                total: history[i].total,
+                date: tanggal,
             }
             total += history[i].total
             hist.push(data)
         }
-        
+
         return res.status(200).send({
-            total_donasi_yang_diterima : total,
-            saldo : saldo,
-            history:hist
+            total_donasi_yang_diterima: total,
+            saldo: saldo,
+            history: hist
         });
     },
-    HistoryT: async function (req,res){
+    HistoryT: async function (req, res) {
         const user = req.user;
         const history = await db.Transaction.findAll({
             where: {
                 receiver: user.username,
-                type : "transfer",
+                type: "transfer",
                 status: "complete"
             }
         })
@@ -223,22 +231,22 @@ const penerima = {
             let tanggal = history[i].createdAt;
             tanggal = tanggal.toISOString().split('T')[0];
             // let waktu = tanggal.toISOString().split('Z')[0];
-            let data ={
-                id_transaksi : history[i].id_transaksi,
-                donator : history[i].donator,
-                amount : history[i].amount,
-                cut : history[i].cut,
-                total : history[i].total,
-                date : tanggal,
+            let data = {
+                id_transaksi: history[i].id_transaksi,
+                donator: history[i].donator,
+                amount: history[i].amount,
+                cut: history[i].cut,
+                total: history[i].total,
+                date: tanggal,
             }
             total += history[i].total
             hist.push(data)
         }
-        
+
         return res.status(200).send({
-            total_transfer : total,
-            saldo : saldo ,
-            history:hist
+            total_transfer: total,
+            saldo: saldo,
+            history: hist
         });
     },
     getLink: async function (req, res) {
@@ -263,11 +271,11 @@ const penerima = {
         }
         const { amount, bank_code, bank_account } = req.body;
         const saldo = await transactionFunctions.calculateSaldo(req.user.username)
-        if(saldo < amount){
-            return res.status(400).send({ 
+        if (saldo < amount) {
+            return res.status(400).send({
                 message: "Saldo tidak mencukupi!",
                 saldo_sekarang: parseInt(saldo),
-                amount_entered: parseInt(amount) 
+                amount_entered: parseInt(amount)
             })
         }
         const id = await transactionFunctions.generateTransferId(dateFunctions.todayDate())
@@ -277,10 +285,10 @@ const penerima = {
             await axios.post(
                 `${process.env.OY_BASE_URL}/api/remit`,
                 {
-                    "recipient_bank": bank_code+"",
-                    "recipient_account": bank_account+"",
+                    "recipient_bank": bank_code + "",
+                    "recipient_account": bank_account + "",
                     "amount": total,
-                    "note": "Transfer from "+req.user.username,
+                    "note": "Transfer from " + req.user.username,
                     "partner_trx_id": id,
                     "email": req.user.email
                 },
@@ -299,7 +307,7 @@ const penerima = {
                 error_code: oy.status.code
             })
         }
-        
+
         await db.Transaction.create({
             id_transaksi: id,
             receiver: req.user.username,
@@ -307,8 +315,8 @@ const penerima = {
             amount: parseInt(amount),
             cut: parseInt(cut),
             total: parseInt(total),
-            bank_code: bank_code+"",
-            bank_account: bank_account+"",
+            bank_code: bank_code + "",
+            bank_account: bank_account + "",
             status: "complete"
         })
         return res.status(201).send({
@@ -318,14 +326,14 @@ const penerima = {
             biaya_admin: parseInt(cut),
             total_akhir: parseInt(total),
             sisa_saldo: parseInt(saldo) - parseInt(amount),
-            bank_code: bank_code+"",
-            bank_account: bank_account+""
+            bank_code: bank_code + "",
+            bank_account: bank_account + ""
         })
     },
     tesAuth: async function (req, res) {
         return res.status(200).send({
             message: "Authentication Sukses"
-        }) 
+        })
     },
     delete_acc: async function (req, res) { // endpoint ini digunakan untuk mendelete account, dan hanya user yang login di akun yang ingin dihapus yang dapat menghapus akunnya sendiri
 
@@ -338,10 +346,10 @@ const penerima = {
         });
 
         if (!penerima) {
-            return res.status(404).send({message: "Tidak ada akun dengan username "+ userdata.username})
+            return res.status(404).send({ message: "Tidak ada akun dengan username " + userdata.username })
         }
 
-        
+
         const hapus_penerima = await db.User.destroy({
             where: {
                 username: userdata.username,
@@ -350,11 +358,11 @@ const penerima = {
         });
 
         return res.status(200).send({
-            message: "User dengan username "+userdata.username+" berhasil dihapus"
+            message: "User dengan username " + userdata.username + " berhasil dihapus"
         })
     },
     update_acc: async function (req, res) { // endpoint ini digunakan untuk mendelete account, dan hanya user yang login di akun yang ingin dihapus yang dapat menghapus akunnya sendiri
-        
+
 
         const userdata = req.userdata;
         const penerima = await db.User.findOne({
@@ -365,13 +373,13 @@ const penerima = {
         });
 
         if (!penerima) {
-            return res.status(404).send({message: "Tidak ada akun dengan username "+ userdata.username})
+            return res.status(404).send({ message: "Tidak ada akun dengan username " + userdata.username })
         }
 
         const schema = Joi.object({
             full_name: Joi.string().required(),
             display_name: Joi.string().required(),
-            gender: Joi.string().valid('Male','Female').required(),
+            gender: Joi.string().valid('Male', 'Female').required(),
             desc: Joi.string().required(),
             hp: Joi.string().min(9).max(12).pattern(/^[0-9]+$/).required(),
             tgl_lahir: Joi.date().format('DD/MM/YYYY').required(),
@@ -379,43 +387,43 @@ const penerima = {
         try {
             await schema.validateAsync(req.body)
         } catch (error) {
-            return res.status(400).send({message: error.toString()})
+            return res.status(400).send({ message: error.toString() })
         }
-        
-        const {full_name, display_name, gender, desc, hp, tgl_lahir} = req.body;
 
-        const [day,month,year] = tgl_lahir.split('/');//format dd/mm/yyyy
-        
+        const { full_name, display_name, gender, desc, hp, tgl_lahir } = req.body;
+
+        const [day, month, year] = tgl_lahir.split('/');//format dd/mm/yyyy
+
         const date = new Date(+year, +month - 1, +day);
 
         const update_data = await db.User.update(
             {
                 full_name: full_name,
-                display_name:display_name,
-                gender:gender,
-                desc:desc,
-                hp:hp,
-                tgl_lahir:date,
+                display_name: display_name,
+                gender: gender,
+                desc: desc,
+                hp: hp,
+                tgl_lahir: date,
             },
             {
-                where:{
-                    username:userdata.username
+                where: {
+                    username: userdata.username
                 }
             }
         );
 
         const body = {
             full_name: full_name,
-            display_name:display_name,
-            gender:gender,
-            desc:desc,
-            hp:hp,
-            tgl_lahir:tgl_lahir,
+            display_name: display_name,
+            gender: gender,
+            desc: desc,
+            hp: hp,
+            tgl_lahir: tgl_lahir,
         }
-        
+
 
         return res.status(200).send({
-            message: "User dengan username "+userdata.username+" berhasil diupdate",
+            message: "User dengan username " + userdata.username + " berhasil diupdate",
             body
         })
     },
