@@ -35,10 +35,10 @@ app.use(apiRouter);
 
 //cara pake dotenv
 require('dotenv').config()
-console.log(process.env.OY_USERNAME)
+//console.log(process.env.OY_USERNAME)
 
 //timer cek donasi sudah dibikin
-setInterval(backgroundFunctions.cekDonasi, 100000);
+setInterval(backgroundFunctions.cekDonasi, 900000);
 
 const port = 3000;
 app.listen(port, function () { 
